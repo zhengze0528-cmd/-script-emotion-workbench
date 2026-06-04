@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>口播创作可视化工作台</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="kicker">Talk Script Visual Planner</p>
+          <h1>口播创作可视化工作台</h1>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="loadSample" type="button" title="载入示例文稿">示例</button>
+          <button class="ghost-btn" id="exportMarkdown" type="button" title="导出 Markdown">导出 MD</button>
+          <button class="primary-btn" id="analyzeBtn" type="button" title="分析口播">分析口播</button>
+        </div>
+      </header>
+
+      <section class="workspace-grid">
+        <aside class="script-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Input</p>
+              <h2>口播文稿</h2>
+            </div>
+            <span class="counter" id="wordCounter">0 字</span>
+          </div>
+          <textarea id="scriptInput" spellcheck="false" placeholder="把口播稿、选题草稿、直播切片文案贴进来。系统会拆成情绪导览、呼吸口、剪辑目标和可修改段落。"></textarea>
+          <div class="feed-grid">
+            <label>
+              <span>内容类型</span>
+              <select id="formatSelect">
+                <option value="口播">口播</option>
+                <option value="知识分享">知识分享</option>
+                <option value="观点评论">观点评论</option>
+                <option value="带货种草">带货种草</option>
+                <option value="故事复盘">故事复盘</option>
+              </select>
+            </label>
+            <label>
+              <span>时长目标</span>
+              <select id="durationSelect">
+                <option value="60s">60s</option>
+                <option value="90s">90s</option>
+                <option value="3min">3min</option>
+                <option value="5min">5min</option>
+              </select>
+            </label>
+            <label>
+              <span>剪辑倾向</span>
+              <select id="styleSelect">
+                <option value="克制信息流">克制信息流</option>
+                <option value="强节奏切片">强节奏切片</option>
+                <option value="情绪叙事">情绪叙事</option>
+                <option value="干货密集">干货密集</option>
+              </select>
+            </label>
+          </div>
+        </aside>
+
+        <section class="insight-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Emotion Map</p>
+              <h2>情绪点可视化</h2>
+            </div>
+            <span class="status-pill" id="analysisStatus">等待输入</span>
+          </div>
+
+          <div class="creative-pulse" id="creativePulse"></div>
+
+          <div class="visual-map" id="visualMap" aria-label="口播成片地图"></div>
+
+          <div class="cut-list" id="cutList"></div>
+
+          <div class="goal-strip" id="goalStrip"></div>
+
+          <div class="insight-columns">
+            <div>
+              <p class="section-label">情绪节点</p>
+              <div class="stack-list" id="emotionList"></div>
+            </div>
+            <div>
+              <p class="section-label">呼吸口</p>
+              <div class="stack-list" id="breathList"></div>
+            </div>
+          </div>
+
+          <div class="emotion-peaks">
+            <div class="section-headline">
+              <div>
+                <p class="section-label">情绪点分析</p>
+                <h3>这条口播真正起情绪的位置</h3>
+              </div>
+            </div>
+            <div class="emotion-peak-list" id="emotionPeakList"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="director-board">
+        <div class="board-header">
+          <div>
+            <p class="eyebrow">Edit</p>
+            <h2>分镜与逐段修改</h2>
+          </div>
+          <div class="view-toggle" role="group" aria-label="视角切换">
+            <button class="toggle active" data-view="detail" type="button">分镜</button>
+            <button class="toggle" data-view="overview" type="button">总览</button>
+          </div>
+        </div>
+
+        <div class="board-grid">
+          <div class="shot-list" id="shotList"></div>
+          <div class="detail-panel" id="detailPanel">
+            <div class="detail-head">
+              <div>
+                <p class="section-label">当前段落</p>
+                <h3 id="activeShotTitle">等待分析</h3>
+              </div>
+              <span class="status-pill ready" id="detailEmotion">-</span>
+            </div>
+
+            <p class="active-note" id="activeShotNote">贴入文稿后，这里会出现语气、呼吸、剪辑节奏和字幕重点。</p>
+
+            <div class="rhythm-rail" id="rhythmRail"></div>
+
+            <div class="storyboard-preview" id="storyboardPreview">
+              <div class="storyboard-frame">
+                <div class="frame-safe top"></div>
+                <div class="frame-safe bottom"></div>
+                <div class="frame-subtitle" id="frameSubtitle">字幕重点</div>
+                <div class="frame-label" id="frameLabel">P1 · 口播主画面</div>
+              </div>
+              <div class="storyboard-spec">
+                <div>
+                  <span>A-roll 主讲</span>
+                  <strong id="frameAroll">-</strong>
+                </div>
+                <div>
+                  <span>自拍 / 外景点</span>
+                  <strong id="frameLocation">-</strong>
+                </div>
+                <div>
+                  <span>B-roll</span>
+                  <strong id="frameBroll">-</strong>
+                </div>
+                <div>
+                  <span>情绪铺法</span>
+                  <strong id="frameEmotionBuild">-</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-grid">
+              <article class="detail-card">
+                <span>镜头选择</span>
+                <strong id="detailLens">-</strong>
+              </article>
+              <article class="detail-card">
+                <span>怎么说</span>
+                <strong id="detailTone">-</strong>
+              </article>
+              <article class="detail-card">
+                <span>哪里停</span>
+                <strong id="detailBreath">-</strong>
+              </article>
+              <article class="detail-card">
+                <span>怎么剪</span>
+                <strong id="detailCut">-</strong>
+              </article>
+              <article class="detail-card">
+                <span>字幕抓什么</span>
+                <strong id="detailSubtitle">-</strong>
+              </article>
+            </div>
+
+            <div class="rewrite-box">
+              <p class="section-label">修改建议</p>
+              <div id="rewriteAdvice">选择一个段落后显示。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
